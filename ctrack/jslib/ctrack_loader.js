@@ -13,7 +13,14 @@ ctrack_loader=function(args){
 	}
 	
 	// the canonical url keeps search and hash
-	let canurl="https://d-portal.org/ctrack.html"+ window.location.search + window.location.hash
+	let canurl="https://d-portal.iatistandard.org/ctrack.html"+ window.location.search + window.location.hash
+	
+	// redirect d-portal.org in js
+	if(window.location.host.toLowerCase()=="d-portal.org")
+	{
+		window.location.replace(canurl)
+		return
+	}
 
 	let link = document.querySelector('link[rel="canonical"]')
 	if(!link) // create and insert into head
@@ -34,7 +41,7 @@ ctrack_loader=function(args){
 		args.style="white"
 	}
 	else
-	if( domtest["d-portal"] ) // client is accessed via d-portal.org
+	if( domtest["d-portal"] && (!domtest["local"]) ) // client is accessed via d-portal.org
 	{
 		args.style="classic"
 		
@@ -56,11 +63,26 @@ ctrack_loader=function(args){
 		args.style="classic"
 	}
 	else
-	if( domtest["localhost"] ) // client is accessed via localhost
+	if( domtest["localhost"] || domtest["local"] ) // client is accessed via localhost
 	{
 		// simple local test with data accessed from main server
 		qroot="//d-portal.org/"
 		args.style="mixed"
+
+		// can force style by setting up sub localhost domains
+		if( domtest["mixed"] )
+		{
+			args.style="mixed"
+		}
+		if( domtest["white"] )
+		{
+			args.style="white"
+		}
+		if( domtest["classic"] )
+		{
+			args.style="classic"
+		}
+
 	}
 	else // client is hosted somewhere else
 	{
